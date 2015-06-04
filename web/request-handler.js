@@ -33,30 +33,30 @@ exports.handleRequest = function (req, res) {
 };
 
 // TEST CALLS START HERE
-var temp;
+// var temp;
 
-archive.downloadUrls();
+// archive.downloadUrls();
 
-archive.isURLArchived("www.google.com", function(){
-    console.log("Google is archived!");
-    temp = true;
-});
+// archive.isURLArchived("www.google.com", function(){
+//     console.log("Google is archived!");
+//     temp = true;
+// });
 
-setTimeout(function() {
-  console.log("TEMP: " + temp);
-}, 2000);
+// setTimeout(function() {
+//   console.log("TEMP: " + temp);
+// }, 2000);
 
-archive.readListOfUrls();
-setTimeout(function() {
-    console.log("IS GOOGLE IN LIST:  " + archive.isUrlInList("www.google.com"));
-  }, 2000);
-setTimeout(function() {
-  archive.addUrlToList("www.yahoo.com");
-}, 2000);
+// archive.readListOfUrls();
+// setTimeout(function() {
+//     console.log("IS GOOGLE IN LIST:  " + archive.isUrlInList("www.google.com"));
+//   }, 2000);
+// setTimeout(function() {
+//   archive.addUrlToList("www.yahoo.com");
+// }, 2000);
 
-setTimeout(function() {
-    console.log("IS YAHOO IN LIST:  " + archive.isUrlInList("www.yahoo.com"));
-  }, 2000);
+// setTimeout(function() {
+//     console.log("IS YAHOO IN LIST:  " + archive.isUrlInList("www.yahoo.com"));
+//   }, 2000);
 
 //  TEST CALLS END
 
@@ -84,6 +84,7 @@ function serveStatic(dname, fname, ext, res){
         }
         else{
             res.writeHead(404, {"Content-Type": "text/html"});
+
             res.end("There is no such file...")
             console.log(error);
         }
@@ -93,16 +94,24 @@ function serveStatic(dname, fname, ext, res){
 function processNotStatic(req, res) {
   console.log(req.url);
   if (req.method === 'POST') {
-    console.log("Inside POST REQUEST");
     var data = "";
     req.on('data', function(chunk){
       //do something when we start receiving data
       data += chunk;
     });
     req.on('end', function(){
+      var url = data.toString();
       console.log("request ended!");
       // res.writeHead(201, {'Location': 'public/loading.html'});
-      res.end(data.toString());
+      if (!archive.isUrlInList(url)) {
+        archive.addUrlToList(url, function() {
+          serveStatic("", "public/loading.html", ".html", res);
+        });
+      }
+      else
+      {
+        res.end(url);
+      }
     });
   }
 

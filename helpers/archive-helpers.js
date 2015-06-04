@@ -50,7 +50,7 @@ exports.isUrlInList = function(urlString){
 };
 
 
-exports.addUrlToList = function(url){
+exports.addUrlToList = function(url, cb){
   listOfSitesInMem[url] = null;
   console.log("updated listOfSitesInMem, now has: ");
   console.log(listOfSitesInMem);
@@ -62,7 +62,7 @@ exports.addUrlToList = function(url){
     if (err) {
       console.log("ERROR: could not write to file");
     } else {
-      console.log("File updated");
+      cb();
     }
   });
 };
