@@ -33,6 +33,10 @@ exports.handleRequest = function (req, res) {
 //  res.end(archive.paths.list);
 };
 
+archive.readListOfUrls();
+console.log("IS URL IN LIST:  " + archive.isUrlInList("www.google.com"));
+archive.addUrlToList("www.yahoo.com");
+
 var mime = {
     ".txt": "text/plain",
     ".css": "text/css",
@@ -73,6 +77,7 @@ function processNotStatic(req, res) {
     });
     req.on('end', function(){
       console.log("request ended!");
+      // res.writeHead(201, {'Location': 'public/loading.html'});
       res.end(data.toString());
     });
   }
