@@ -1,6 +1,9 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var request = require('request');
+
+var listOfSitesInMem = {};
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -47,11 +50,57 @@ exports.isUrlInList = function(urlString){
 };
 
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(url){
+  listOfSitesInMem[url] = null;
+  console.log("updated listOfSitesInMem, now has: ");
+  console.log(listOfSitesInMem);
+  var data = "";
+  for (var key in listOfSitesInMem) {
+    data += key + '\n';
+  }
+  fs.writeFile(exports.paths.list, data, function(err) {
+    if (err) {
+      console.log("ERROR: could not write to file");
+    } else {
+      console.log("File updated");
+    }
+  });
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(url, func){
+
+    fs.readFile(exports.paths.archivedSites + "/" + url + '.html', function(error, data){
+        if(!error){
+          console.log("INSIDE ISURLARCHIVED:  ");
+          func();
+        }
+        else{
+          console.log(error);
+          return false;
+        }
+    });
+
 };
 
-exports.downloadUrls = function(){
+exports.downloadUrls = function(url){
+
+  // The structure of our request call
+  // The first parameter is our URL
+  // The callback function takes 3 parameters, an error, response status code and the html
+
+  request('http://' + url, function(error, response, html){
+
+      // First we'll check to make sure no errors occurred when making the request
+
+      if(!error){
+        fs.writeFile(exports.paths.archivedSites + '/' + url + '.html', html, function(err) {
+          if (err) {
+            console.log("ERROR: could not write to file");
+          } else {
+            console.log("File updated");
+          }
+        });
+      }
+  });
+
 };

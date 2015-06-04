@@ -3,7 +3,6 @@ var url = require('url');
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
-//var httphelp = require('./http-helpers.js');
 
 // require more modules/folders here!
 
@@ -33,9 +32,34 @@ exports.handleRequest = function (req, res) {
 //  res.end(archive.paths.list);
 };
 
+// TEST CALLS START HERE
+var temp;
+
+archive.downloadUrls();
+
+archive.isURLArchived("www.google.com", function(){
+    console.log("Google is archived!");
+    temp = true;
+});
+
+setTimeout(function() {
+  console.log("TEMP: " + temp);
+}, 2000);
+
 archive.readListOfUrls();
-console.log("IS URL IN LIST:  " + archive.isUrlInList("www.google.com"));
-archive.addUrlToList("www.yahoo.com");
+setTimeout(function() {
+    console.log("IS GOOGLE IN LIST:  " + archive.isUrlInList("www.google.com"));
+  }, 2000);
+setTimeout(function() {
+  archive.addUrlToList("www.yahoo.com");
+}, 2000);
+
+setTimeout(function() {
+    console.log("IS YAHOO IN LIST:  " + archive.isUrlInList("www.yahoo.com"));
+  }, 2000);
+
+//  TEST CALLS END
+
 
 var mime = {
     ".txt": "text/plain",
